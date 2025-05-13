@@ -1,0 +1,9 @@
+astroquery==0.4.10
+pandas==2.2.3
+requests==2.31.0
+astropy==7.0.1
+numpy==2.1.2
+matplotlib==3.10.1
+scikit-learn==1.6.1
+tqdm==4.67.1
+torch==2.7.0
