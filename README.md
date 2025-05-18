@@ -1,4 +1,4 @@
-# Esploración de la utilidad de los modelos MLP para la resolución de EDPs.
+# Exploración de la utilidad de los modelos MLP para la resolución de EDPs
 
 Este repositorio contiene el código de varios algoritmos de Diferencias Finitas y de Neural Networks que se comparan entre sí con el objetivo de indagar sobre los pros y contras de los métodos convencionales y de los actuales.
 
@@ -17,13 +17,7 @@ Los métodos de resolución de EDPs incluidos en este proyecto son:
 
 - **[1D_heat_NN](<1D_heat_NN.ipynb>), [1D_heat_MDF](<1D_heat_MDF.ipynb>):** Notebooks dedicados a la resolución de la ecuación del calor en espacio (1D) y tiempo.
 - **[1D_heat_alpha_NN](<1D_heat_alpha_NN.ipynb>):** Incorpora el parámetro de difusión térmica al entrenamiento, de forma que lo podemos tratar como una variable más.
-
-<br />
-
 - **[1D_heat_NN](<1D_heat_NN.ipynb>), [1D_heat_MDF](<1D_heat_MDF.ipynb>):** Notebooks dedicados a la resolución de la ecuación del calor en espacio (1D) y tiempo.
-
-<br />
-
 - **[1D_heat_NN](<1D_heat_NN.ipynb>), [1D_heat_MDF](<1D_heat_MDF.ipynb>):** Notebooks dedicados a la resolución de la ecuación del calor en espacio (1D) y tiempo.
 
 ## Uso
