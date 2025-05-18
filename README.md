@@ -12,9 +12,6 @@ Los métodos de resolución de EDPs incluidos en este proyecto son:
 ## Estructura del Proyecto
 
 - **/models:** Carpeta con los modelos ya entrenados que se presentan en la memoria del trabajo.
-
-<br />
-
 - **[1D_heat_NN](<1D_heat_NN.ipynb>), [1D_heat_MDF](<1D_heat_MDF.ipynb>):** Notebooks dedicados a la resolución de la ecuación del calor en espacio (1D) y tiempo.
 - **[1D_heat_alpha_NN](<1D_heat_alpha_NN.ipynb>):** Incorpora el parámetro de difusión térmica al entrenamiento, de forma que lo podemos tratar como una variable más.
 - **[1D_heat_NN](<1D_heat_NN.ipynb>), [1D_heat_MDF](<1D_heat_MDF.ipynb>):** Notebooks dedicados a la resolución de la ecuación del calor en espacio (1D) y tiempo.
