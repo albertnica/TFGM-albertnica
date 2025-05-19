@@ -9,7 +9,7 @@ tic
 
 %% Parametros fisicos y numericos
 Lx = 2*pi;   Ly = 2*pi;       % Dominio [0,2pi)×[0,2pi)
-Nx = 100;    Ny = 100;        % Numero de puntos en cada direccion
+Nx = 200;    Ny = 200;        % Numero de puntos en cada direccion
 dx = Lx/Nx; dy = Ly/Ny;
 nu = 1e-2;                    % Viscosidad
 beta = 1e1;                   % Compresibilidad artificial
@@ -62,8 +62,6 @@ P_mat = L2D;  % para Delta(p) periodico
 
 %% Preparar almacenamiento de datos de evolucion
 t = 0; it = 0;
-div_L2 = [];   % almacena norma L2 de divergencia
-t_vec   = [];  % almacena tiempo en cada iteracion
 
 %% Bucle de tiempo
 while t < T_final
@@ -81,7 +79,6 @@ while t < T_final
 
   % Guardar tiempo actual + dt
   t = t + dt;
-  t_vec(end+1) = t;
 
   % Adveccion explicita
   adv_u = u_vec .* (Dx*u_vec) + v_vec .* (Dy*u_vec);
@@ -110,23 +107,9 @@ while t < T_final
   gradp_y = Dy * p_vec;
   u_vec = u_star - (dt/beta)*gradp_x;
   v_vec = v_star - (dt/beta)*gradp_y;
-
-  % Normas de divergencia
-  div_L2(end+1) = norm(Dx*u_vec + Dy*v_vec, 2);
 end
 
 toc
-
-% ============================================================
-% Representacion del error L2 de divergencia frente al tiempo
-% ============================================================
-figure;
-plot(t_vec, div_L2, 'LineWidth', 1.5);
-grid on;
-xlabel('Tiempo t');
-ylabel('||∇·u||_{2}');
-title('Evolución de la norma L_2 de la divergencia vs. tiempo');
-axis tight;
 
 % ====================================
 % Graficar campo final en t = T_final
