@@ -9,7 +9,7 @@ tic
 
 %% Parametros fisicos y numericos
 Lx = 2*pi;   Ly = 2*pi;       % Dominio [0,2pi)×[0,2pi)
-Nx = 200;    Ny = 200;        % Numero de puntos en cada direccion
+Nx = 400;    Ny = 400;        % Numero de puntos en cada direccion
 dx = Lx/Nx; dy = Ly/Ny;
 nu = 1e-2;                    % Viscosidad
 beta = 1e1;                   % Compresibilidad artificial
@@ -165,3 +165,20 @@ cb = colorbar;
 cb.Label.String = sprintf('u_{exacta} (t=%.2f)', t_ex);
 title(sprintf('Vorticidad exacta en t = %.2f', t_ex));
 axis equal tight; xlabel('x'); ylabel('y');
+
+
+
+
+set(groot, 'DefaultAxesFontSize', 16, ...
+           'DefaultTextFontSize', 16, ...
+           'DefaultColorbarFontSize', 16);
+
+figure;
+contourf(X, Y, OMEGA, 20, 'LineColor', 'none');
+colormap(parula);
+cb = colorbar;
+cb.Label.String = sprintf('\\omega (t=%.2f)', 1);
+title('Vorticidad mediante MDF en t = 1');
+xlabel('x');
+ylabel('y');
+axis equal tight;
