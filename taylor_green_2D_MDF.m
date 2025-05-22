@@ -1,15 +1,14 @@
 clear all
 clc
+tic
 
 % ==================================================================
 %               Vortice de Taylor–Green bidimensional               
 % ==================================================================
 
-tic
-
 %% Parametros fisicos y numericos
 Lx = 2*pi;   Ly = 2*pi;       % Dominio [0,2pi)×[0,2pi)
-Nx = 100;    Ny = 100;        % Numero de puntos en cada direccion
+Nx = 400;    Ny = 400;        % Numero de puntos en cada direccion
 dx = Lx/Nx; dy = Ly/Ny;
 nu = 1e-2;                    % Viscosidad
 beta = 1e5;                   % Compresibilidad artificial
@@ -109,8 +108,6 @@ while t < T_final
   v_vec = v_star - (dt/beta)*gradp_y;
 end
 
-toc
-
 % ====================================
 % Graficar campo final en t = T_final
 % ====================================
@@ -165,3 +162,5 @@ cb = colorbar;
 cb.Label.String = sprintf('u_{exacta} (t=%.2f)', t_ex);
 title(sprintf('Vorticidad exacta en t = %.2f', t_ex));
 axis equal tight; xlabel('x'); ylabel('y');
+
+toc
