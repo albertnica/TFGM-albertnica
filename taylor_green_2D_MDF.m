@@ -9,10 +9,10 @@ tic
 
 %% Parametros fisicos y numericos
 Lx = 2*pi;   Ly = 2*pi;       % Dominio [0,2pi)×[0,2pi)
-Nx = 400;    Ny = 400;        % Numero de puntos en cada direccion
+Nx = 100;    Ny = 100;        % Numero de puntos en cada direccion
 dx = Lx/Nx; dy = Ly/Ny;
 nu = 1e-2;                    % Viscosidad
-beta = 1e1;                   % Compresibilidad artificial
+beta = 1e5;                   % Compresibilidad artificial
 CFL_max = 0.5;                % CFL maximo
 T_final = 1.0;                % Tiempo final de simulación
 
