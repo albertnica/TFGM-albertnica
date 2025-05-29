@@ -6,161 +6,157 @@ tic
 %               Vortice de Taylor–Green bidimensional               
 % ==================================================================
 
+set(groot, 'DefaultAxesFontSize', 18, ...                 % Tamaño de fuente de ejes
+           'DefaultTextFontSize', 20, ...                 % Tamaño de fuente de textos
+           'DefaultColorbarFontSize', 18, ...             % Tamaño de fuente de las etiquetas de colorbar
+           'DefaultAxesTitleFontSizeMultiplier', 1.2, ... % Multiplicador para titulos
+           'DefaultAxesLabelFontSizeMultiplier', 1.1);    % Multiplicador para ejes
+
 %% Parametros fisicos y numericos
-Lx = 2*pi;   Ly = 2*pi;       % Dominio [0,2pi)×[0,2pi)
-Nx = 400;    Ny = 400;        % Numero de puntos en cada direccion
-dx = Lx/Nx; dy = Ly/Ny;
-nu = 1e-2;                    % Viscosidad
-beta = 1e5;                   % Compresibilidad artificial
-CFL_max = 0.5;                % CFL maximo
-T_final = 1.0;                % Tiempo final de simulación
 
-% Coordenadas
-x = (0:Nx-1)' * dx;
-y = (0:Ny-1)' * dy;
-[X,Y] = meshgrid(x,y);
+N1   = 400;       % puntos totales en x
+N2   = 400;       % puntos totales en y
+Re   = 10;       % número de Reynolds
+beta = 1e3;        % compresibilidad artificial
+dt   = 0.005;    % paso de tiempo
+T    = 1.0;      % tiempo final
+Nt   = round(T/dt);
 
-%% Condiciones iniciales
-u_mat =  sin(X).*cos(Y);
-v_mat = -cos(X).*sin(Y);
+% Mallado completo en [0, 2*pi] × [0, 2*pi]
+x  = linspace(0, 2*pi, N1);
+y  = linspace(0, 2*pi, N2);
+dx = (2*pi)/(N1-1);
+dy = (2*pi)/(N2-1);
+[X, Y] = meshgrid(x, y);
+
+% Número de nodos interiores
+mx = N1-1;
+my = N2-1;
+m  = mx * my;
+
+% Operadores 1D de diferencias finitas con periodicidad
+ex = ones(mx,1);
+ey = ones(my,1);
+
+% Laplaciano 1D periodico
+Lx = spdiags([ex -2*ex ex],[-1 0 1],mx,mx);
+Lx(1,mx)  = 1;    % periodicidad conectando 1 con mx
+Lx(mx,1)  = 1;    % periodicidad conectando mx con 1
+Lx = Lx / dx^2;
+
+Ly = spdiags([ey -2*ey ey],[-1 0 1],my,my);
+Ly(1,my)  = 1;    % periodicidad conectando 1 con my
+Ly(my,1)  = 1;    % periodicidad conectando my con 1
+Ly = Ly / dy^2;
+
+% Gradiente 1D periodico
+Dx = spdiags([-ex 0*ex ex],[-1 0 1],mx,mx);
+Dx(1,mx) = -1;    % periodicidad, coeficiente de i=1 ← i=mx
+Dx(mx,1) =  1;    % periodicidad, coeficiente de i=mx → i=1
+Dx = Dx / (2*dx);
+
+Dy = spdiags([-ey 0*ey ey],[-1 0 1],my,my);
+Dy(1,my) = -1;    % periodicidad, coeficiente de j=1 ← j=my
+Dy(my,1) =  1;    % periodicidad, coeficiente de j=my → j=1
+Dy = Dy / (2*dy);
+
+% Operadores 2D (Kronecker)
+Ix = speye(mx);
+Iy = speye(my);
+L  = kron(Iy, Lx) + kron(Ly, Ix);   % Laplaciano 2D periódico
+A2 = kron(Iy, Dx);                  % gradiente ∂/∂x periódico
+A3 = kron(Dy, Ix);                  % gradiente ∂/∂y periódico
+
+% Montaje de M
+A1 = (1/dt)*speye(m) - (1/Re)*L;
+Z  = sparse(m,m);
+I3 = speye(m);
+M  = [ A1,         Z,      A2;
+       Z,          A1,     A3;
+      beta*A2,  beta*A3,   I3 ];
+
+% Condiciones iniciales en la malla completa
+u_mat        =  cos(X).*sin(Y);
+v_mat        = -sin(X).*cos(Y);
 p_an_spatial = (cos(2*X)+cos(2*Y))/4;
 
-u_vec = u_mat(:);
-v_vec = v_mat(:);
-p_vec = p_an_spatial(:);
+% Extraccion de interiores excluyendo el ultimo indice periodico
+u = reshape( u_mat(1:end-1, 1:end-1)' , m, 1 );        % uso 1:end-1 en lugar de 2:end-1
+v = reshape( v_mat(1:end-1, 1:end-1)' , m, 1 );        % similar para v
+p = reshape( p_an_spatial(1:end-1, 1:end-1)' , m, 1 ); % similar para p
+xk = [u; v; p];
 
-%% Operadores periodicos dispersos
-eNx = ones(Nx,1); eNy = ones(Ny,1);
-% Laplaciano 1D con wrap-around
-L1D_x = spdiags([eNx -2*eNx eNx], -1:1, Nx, Nx);
-L1D_x(1,Nx) = 1;   L1D_x(Nx,1) = 1;
-L1D_x = L1D_x / dx^2;
-L1D_y = spdiags([eNy -2*eNy eNy], -1:1, Ny, Ny);
-L1D_y(1,Ny) = 1;   L1D_y(Ny,1) = 1;
-L1D_y = L1D_y / dy^2;
-
-% Derivadas primeras 1D
-D1_x = spdiags([-eNx zeros(Nx,1) eNx], -1:1, Nx, Nx);
-D1_x(1,Nx) = -1;   D1_x(Nx,1) = 1;
-D1_x = D1_x / (2*dx);
-D1_y = spdiags([-eNy zeros(Ny,1) eNy], -1:1, Ny, Ny);
-D1_y(1,Ny) = -1;   D1_y(Ny,1) = 1;
-D1_y = D1_y / (2*dy);
-
-Ix = speye(Nx); Iy = speye(Ny);
-L2D = kron(Iy,L1D_x) + kron(L1D_y,Ix);
-Dx  = kron(Iy,D1_x);
-Dy  = kron(D1_y,Ix);
-
-%% Matrices para difusivo y Poisson
-A = speye(Nx*Ny) - nu * dx^2 * L2D * (1/dx^2);  % implicito viscosa
-[Lfac_A,Ufac_A,PF_A] = lu(A);
-
-P_mat = L2D;  % para Delta(p) periodico
-[Lfac_P,Ufac_P,PF_P] = lu(P_mat);
-
-%% Preparar almacenamiento de datos de evolucion
-t = 0; it = 0;
-
-%% Bucle de tiempo
-while t < T_final
-  it = it + 1;
-
-  % Calculo de dt segun CFL y difusion
-  magU = sqrt(u_vec.^2 + v_vec.^2);
-  Umax = max(magU);
-  dt_conv = CFL_max * min(dx,dy) / (Umax + eps);
-  dt_diff = 0.5 * min(dx,dy)^2 / nu;
-  dt = min(dt_conv, dt_diff);
-  if t + dt > T_final
-    dt = T_final - t;
-  end
-
-  % Guardar tiempo actual + dt
-  t = t + dt;
-
-  % Adveccion explicita
-  adv_u = u_vec .* (Dx*u_vec) + v_vec .* (Dy*u_vec);
-  adv_v = u_vec .* (Dx*v_vec) + v_vec .* (Dy*v_vec);
-
-  % Prediccion de momento
-  RHSu = u_vec - dt*(adv_u);
-  RHSv = v_vec - dt*(adv_v);
-
-  % Fase difusiva implicita
-  u_star = Ufac_A \ (Lfac_A \ (PF_A*RHSu));
-  v_star = Ufac_A \ (Lfac_A \ (PF_A*RHSv));
-
-  % Poisson de presion
-  div_star = Dx*u_star + Dy*v_star;
-  bP = (beta/dt) * div_star;
-  p_corr = Ufac_P \ (Lfac_P \ (PF_P*bP));
-
-  % Hibridacion con solucion analitica atenuada
-  F2 = exp(-4 * nu * t);
-  p_an = p_an_spatial(:) * F2;
-  p_vec = 0.5*p_corr + 0.5*p_an;
-
-  % Correccion de velocidades
-  gradp_x = Dx * p_vec;
-  gradp_y = Dy * p_vec;
-  u_vec = u_star - (dt/beta)*gradp_x;
-  v_vec = v_star - (dt/beta)*gradp_y;
+% Bucle temporal hasta t = 1
+for k = 1:Nt
+    rhs = [ (1/dt)*u;
+            (1/dt)*v;
+             zeros(m,1) ];
+    xk = M \ rhs;
+    u  = xk(         1:m );
+    v  = xk((m+1):2*m );
+    p  = xk((2*m+1):3*m);
 end
 
 % ====================================
-% Graficar campo final en t = T_final
+% Mapas de calor para u, v y vorticidad
 % ====================================
-% Reconstruir matrices en 2D
-U = reshape(u_vec, Ny, Nx);
-V = reshape(v_vec, Ny, Nx);
 
+% Reconstruir matrices 2D 
+U = reshape(u, mx, my)';
+V = reshape(v, mx, my)';
+
+% Submalla de nodos interiores periodicos
+x_int = x(1:end-1);
+y_int = y(1:end-1);
+[X_int, Y_int] = meshgrid(x_int, y_int);
+
+% Campos u y v: mapas de calor
 figure;
-campos = {U, V};
+campos  = {U, V};
 nombres = {'u', 'v'};
 for k = 1:2
-  subplot(1,2,k);
-  contourf(X, Y, campos{k}, 20, 'LineColor', 'none');  % relleno limpio
-  colormap(parula);                                    % colormap intuitivo
-  cb = colorbar;                                       % añadir leyenda
-  cb.Label.String = sprintf('%s (t=%.2f)', nombres{k}, 0);
-  title(sprintf('%s en t=T_{final}', nombres{k}));
-  axis equal tight; xlabel('x'); ylabel('y');
+    subplot(1,2,k);
+    contourf( X_int, Y_int, campos{k}, 20, 'LineColor', 'none' );
+    cb = colorbar;
+    cb.Label.String = sprintf('%s (t = %.2f)', nombres{k}, T);
+    title( sprintf('%s en t = %.2f', nombres{k}, T) );
+    axis equal tight;
+    xlabel('x'); ylabel('y');
 end
 
-% ==========================================
-% Graficar vorticidad aproximada en T_final
-% ==========================================
-% Reconstruir campos en 2D
-U = reshape(u_vec, Ny, Nx);
-V = reshape(v_vec, Ny, Nx);
+% Vorticidad numérica en t=1
+omega_vec = (kron(Iy, Dx)*v) - (kron(Dy, Ix)*u);
+OMEGA     = reshape(omega_vec, mx, my)';
 
-% Calcular vorticidad
-omega_vec = Dx * v_vec - Dy * u_vec;
-OMEGA = reshape(omega_vec, Ny, Nx);
-
-% Graficar vorticidad
 figure;
-contourf(X, Y, OMEGA, 20, 'LineColor', 'none');
-colormap(parula);
+contourf( X_int, Y_int, OMEGA, 20, 'LineColor', 'none' );
 cb = colorbar;
-cb.Label.String = sprintf('\\omega (t=%.2f)', T_final);
-title('Vorticidad mediante MDF en t = T_{final}');
+cb.Label.String = sprintf('\\omega (t = %.2f)', 1);
+title('Vorticidad numérica en t = 1.00');
 axis equal tight;
 xlabel('x'); ylabel('y');
 
-% ======================================
-% Graficar vorticidad exacta en T_final
-% ======================================
-t_ex = T_final;
-omega_exact = -2 * cos(X) .* cos(Y) * exp(-2*nu*t_ex);
+% Vorticidad exacta en t=1
+t_ex        = T;
+omega_exact = -2 * cos(X_int) .* cos(Y_int) * exp(-2*(1/Re)*t_ex);
 
 figure;
-contourf(X, Y, omega_exact, 20, 'LineColor', 'none');
-colormap(parula);
+contourf( X_int, Y_int, omega_exact, 20, 'LineColor', 'none' );
 cb = colorbar;
-cb.Label.String = sprintf('u_{exacta} (t=%.2f)', t_ex);
+cb.Label.String = sprintf('\\omega (t = %.2f)', t_ex);
 title(sprintf('Vorticidad exacta en t = %.2f', t_ex));
-axis equal tight; xlabel('x'); ylabel('y');
+axis equal tight;
+xlabel('x'); ylabel('y');
 
 toc
+
+%% Cálculo del Error Cuadrático Medio (ECM) de la vorticidad
+% Diferencia entre solución numérica y exacta
+error_mat = OMEGA - omega_exact;
+
+% ECM y RMS
+ECM = mean(error_mat(:).^2);
+RMS = sqrt(ECM);
+
+% Mostrar resultados
+fprintf('Error Cuadrático Medio (ECM) = %.2e\n', ECM);
