@@ -14,12 +14,12 @@ set(groot, 'DefaultAxesFontSize', 18, ...                 % Tamaño de fuente de
 
 %% Parametros fisicos y numericos
 
-N1   = 400;       % puntos totales en x
-N2   = 400;       % puntos totales en y
-Re   = 10;       % número de Reynolds
-beta = 1e3;        % compresibilidad artificial
-dt   = 0.005;    % paso de tiempo
-T    = 1.0;      % tiempo final
+N1   = 200;       % puntos totales en x
+N2   = 200;       % puntos totales en y
+Re   = 10;        % número de Reynolds
+beta = 1e3;       % compresibilidad artificial
+dt   = 1/200;     % paso de tiempo
+T    = 1.0;       % tiempo final
 Nt   = round(T/dt);
 
 % Mallado completo en [0, 2*pi] × [0, 2*pi]
