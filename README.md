@@ -1,6 +1,6 @@
 # Exploración de la utilidad de las RNAs para la resolución de EDPs
 
-Este repositorio contiene el código de varios algoritmos basados en el Método de Diferencias Finitas y en Neural Networks que se comparan entre sí con el objetivo de indagar sobre los pros y contras de los métodos convencionales y de los actuales.
+Este repositorio contiene el código de varios algoritmos basados en el Método de Diferencias Finitas y en Neural Networks que se comparan entre sí con el objetivo de indagar sobre los pros y contras de los métodos convencionales y de los actuales. Un análisis detallado se presenta en la [memoria](<TFG_Matematicas_Alberto_Nieto_Cardoso.pdf>) correspondiente.
 
 ## Descripción
 
@@ -15,11 +15,11 @@ Los métodos de resolución de EDPs incluidos en este proyecto son:
 
 <br />
 
-- **[heat_1D_NN](<heat_1D_NN.ipynb>), [1D_heat_MDF](<heat_1D_MDF.ipynb>):** Notebooks dedicados a la resolución de la ecuación del calor en espacio (1D) y tiempo.
-- **[heat_alpha_1D_NN](<heat_alpha_1D_NN.ipynb>):** Incorpora el parámetro de difusión térmica al entrenamiento, de forma que lo podemos tratar como una variable más.
-- **[heat_2D_NN](<heat_2D_NN.ipynb>):** Variante del caso bidimensional sobre dominio triangular.
-- **[poisson_2D_NN](<poisson_2D_NN.ipynb>), [poisson_2D_MDF](<poisson_2D_MDF.ipynb>):** Notebooks dedicados a la resolución de la ecuación del calor en espacio (1D) y tiempo.
-- **[taylor_green_2D_NN](<taylor_green_2D_NN.ipynb>), [taylor_green_2D_MDF](<taylor_green_2D_MDF.m>):** Notebooks dedicados a la resolución de la ecuación del calor en espacio (1D) y tiempo.
+- **[1 heat_1D_NN](<1 heat_1D_NN.ipynb>), [1 1D_heat_MDF](<1 heat_1D_MDF.ipynb>):** Notebooks dedicados a la resolución de la ecuación del calor en espacio (1D) y tiempo.
+- **[2 poisson_2D_NN](<poisson_2D_NN.ipynb>), [2 poisson_2D_MDF](<poisson_2D_MDF.ipynb>):** Notebooks dedicados a la resolución de la ecuación del calor en espacio (1D) y tiempo.
+- **[3 taylor_green_2D_NN](<taylor_green_2D_NN.ipynb>), [3 taylor_green_2D_MDF](<taylor_green_2D_MDF.m>):** Notebooks dedicados a la resolución de la ecuación del calor en espacio (1D) y tiempo.
+- **[4 heat_alpha_1D_NN](<4 heat_alpha_1D_NN.ipynb>):** Incorpora el parámetro de difusión térmica al entrenamiento, de forma que lo podemos tratar como una variable más.
+- **[5 heat_2D_NN](<5 heat_2D_NN.ipynb>):** Variante del caso bidimensional sobre dominio triangular.
 
 ## Uso
 
