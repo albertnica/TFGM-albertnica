@@ -17,7 +17,7 @@ Los métodos de resolución de EDPs incluidos en este proyecto son:
 
 - **[1 heat_1D_NN](<1 heat_1D_NN.ipynb>), [1 1D_heat_MDF](<1 heat_1D_MDF.ipynb>):** Notebooks dedicados a la resolución de la ecuación del calor en espacio (1D) y tiempo.
 - **[2 poisson_2D_NN](<2 poisson_2D_NN.ipynb>), [2 poisson_2D_MDF](<2 poisson_2D_MDF.ipynb>):** Notebooks dedicados a la resolución de la ecuación del calor en espacio (1D) y tiempo.
-- **[3 taylor_green_2D_NN](<3 taylor_green_2D_NN.ipynb>), [3 taylor_green_2D_MDF](<taylor_green_2D_MDF.m>):** Notebooks dedicados a la resolución de la ecuación del calor en espacio (1D) y tiempo.
+- **[3 taylor_green_2D_NN](<3 taylor_green_2D_NN.ipynb>), [3 taylor_green_2D_MDF](<3 taylor_green_2D_MDF.m>):** Notebooks dedicados a la resolución de la ecuación del calor en espacio (1D) y tiempo.
 - **[4 heat_alpha_1D_NN](<4 heat_alpha_1D_NN.ipynb>):** Incorpora el parámetro de difusión térmica al entrenamiento, de forma que lo podemos tratar como una variable más.
 - **[5 heat_2D_NN](<5 heat_2D_NN.ipynb>):** Variante del caso bidimensional sobre dominio triangular.
 
