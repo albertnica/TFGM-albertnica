@@ -25,7 +25,7 @@ The PDE solving methods included in this project are:
 
 1. Clone the repository (install [chocolatey](https://chocolatey.org/install) and [git](https://community.chocolatey.org/packages/Git) if needed):
    ```bash
-   git clone https://github.com/albertotfgm/Alberto-Nieto-Cardoso-TFGM
+   git clone https://github.com/albertnica/TFGM-albertnica
    ```
 2. Install all dependencies (Python 3.13):
    ```bash
@@ -157,4 +157,4 @@ Solving transient heat diffusion on an equilateral triangular domain $L=10$ with
    - Non-standard geometries (such as triangular domains) are accommodated through coordinate sampling without the overhead of generating body-fitted unstructured meshes.
 4. **Activation Functions**:
    - Trigonometric activations (SIREN) and hyperbolic tangents (Tanh) are mandatory for PDE physics. Standard ReLU activations collapse due to vanishing second-order gradients.
-
+
